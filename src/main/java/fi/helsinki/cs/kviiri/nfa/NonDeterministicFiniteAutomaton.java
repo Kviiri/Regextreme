@@ -29,7 +29,7 @@ public class NonDeterministicFiniteAutomaton {
     /**
      * Creates a NFA that matches any String that matches the regex in s.
      * Currently supported operations beyond char-by-char: <ul> <li>+ operation
-     * (at least once)</li> </ul>
+     * (at least once)</li> <li>* operation (zero or more times)</li> </ul>
      *
      * @param s
      */
