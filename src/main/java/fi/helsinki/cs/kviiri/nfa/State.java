@@ -17,13 +17,14 @@ import java.util.*;
 class State {
 
     private Map<Character, Set<State>> transition;
-
+    private Set<State> epsilonTransitions;
     
     /**
      * Constructs a new State that uses a blank transition map.
      */
     State () {
         transition = new HashMap<Character, Set<State>>();
+        epsilonTransitions = new HashSet<State>();
     }
     /**
      * Constructs a new State that uses the specified Map as a transition table.
@@ -65,7 +66,19 @@ class State {
      * @return The transitions from this State with the symbol c (empty Set if none)
      */
     Set<State> getTransition(char c) {
-        if(!transition.containsKey(c)) return new HashSet<State>();
-        return transition.get(c);
+        Set<State> ret = new HashSet<State>();
+        if(transition.containsKey(c)) ret.addAll(transition.get(c));
+        return ret;
+    }
+    
+    /**
+     * @return The epsilon transitions
+     */
+    Set<State> getEpsilonTransitions() {
+        return epsilonTransitions;
+    }
+    
+    void addEpsilonTransition(State s) {
+        epsilonTransitions.add(s);
     }
 }

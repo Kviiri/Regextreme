@@ -30,9 +30,11 @@ public class MyPattern {
     }
     
     public static void main(String[] args) {
-        MyPattern mp = new MyPattern("A+B+A");
-        System.out.println(mp.matches("AAA"));
-        System.out.println(mp.matches("AB+A"));
+        MyPattern mp = new MyPattern("AA*B+");
+        System.out.println(mp.matches("AAAABBBB"));
+        System.out.println(mp.matches("AAAAAA"));
+        System.out.println(mp.matches(""));
+        System.out.println(mp.matches("ABBBABB"));
         System.out.println(mp.matches("AAAAAAAAAAAABBBBBBA"));
     }
     
