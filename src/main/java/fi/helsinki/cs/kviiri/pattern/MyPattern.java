@@ -4,6 +4,9 @@
  */
 package fi.helsinki.cs.kviiri.pattern;
 
+import fi.helsinki.cs.kviiri.nfa.BadRegexException;
+import fi.helsinki.cs.kviiri.nfa.NfaFragment;
+import fi.helsinki.cs.kviiri.nfa.NfaState;
 import fi.helsinki.cs.kviiri.nfa.NonDeterministicFiniteAutomaton;
 
 /**
@@ -14,22 +17,22 @@ import fi.helsinki.cs.kviiri.nfa.NonDeterministicFiniteAutomaton;
  */
 public class MyPattern {
     
-    private NonDeterministicFiniteAutomaton nfa;
+    private NfaState nfa;
     
     /**
      * Compiles the input String into an automaton.
      * @param s
      * @return 
      */
-    public MyPattern(String s) {
-        nfa = new NonDeterministicFiniteAutomaton(s);
+    public MyPattern(String s) throws BadRegexException {
+        nfa = NfaFragment.createNfa(s);
     }
     
     public boolean matches(String input) {
         return nfa.accepts(input);
     }
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BadRegexException {
         MyPattern mp = new MyPattern("AA*B+");
         System.out.println(mp.matches("AAAABBBB"));
         System.out.println(mp.matches("AAAAAA"));

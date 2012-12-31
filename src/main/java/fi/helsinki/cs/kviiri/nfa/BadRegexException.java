@@ -8,7 +8,7 @@ package fi.helsinki.cs.kviiri.nfa;
  *
  * @author kviiri
  */
-public class BadRegexException extends Exception {
+public class BadRegexException extends RuntimeException {
     public BadRegexException(String msg) {
         super(msg);
     }

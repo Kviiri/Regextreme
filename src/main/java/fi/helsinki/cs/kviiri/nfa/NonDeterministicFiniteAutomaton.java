@@ -33,25 +33,36 @@ public class NonDeterministicFiniteAutomaton {
      *
      * @param s
      */
-    public NonDeterministicFiniteAutomaton(String s) {
+    public NonDeterministicFiniteAutomaton(String regex) {
         try {
-            validateRegex(s);
+            validateRegex(regex);
         } catch (BadRegexException ex) {
             System.out.println("The Regex syntax was bad: " + ex.getMessage());
         }
         initialState = new State();
         State currentState = initialState;
-        int i = 0;
-        int amountParsed = 0;
-        while (amountParsed < s.length()) {
-            //read String until an operator is found or the String is exhausted
-            if (isOperator(s.charAt(i)) || i + 1 == s.length()) {
-                currentState = appendAutomaton(s.substring(amountParsed, i + 1), currentState);
-                amountParsed = i + 1;
+
+        //start is the first index that hasn't yet been converted into automaton
+        int start = 0;
+        //end is the current working index
+        int end = 0;
+        while (start < regex.length()) {
+            if (end + 1 < regex.length()) {
+                if (!isOperator(regex.charAt(end + 1))) {
+                    State newState = new State();
+                    currentState.addTransition(regex.charAt(end), newState);
+                    currentState = newState;
+                }
+                else {
+                    switch(regex.charAt(end + 1)) {
+                        case '+':
+                            
+                    }
+                }
             }
-            i++;
         }
         finalState = new HashSet<State>();
+
         finalState.add(currentState);
     }
 
@@ -104,24 +115,6 @@ public class NonDeterministicFiniteAutomaton {
     }
 
     /**
-     * Appends a basic, Star, or Plus automaton based on the operator found in
-     * the String.
-     *
-     * @param s
-     * @return
-     */
-    private State appendAutomaton(String s, State state) {
-        switch (s.charAt(s.length() - 1)) {
-            case '*':
-                return appendStarAutomaton(s.substring(0, s.length() - 1), state);
-            case '+':
-                return appendPlusAutomaton(s.substring(0, s.length() - 1), state);
-            default:
-                return appendBasicAutomaton(s.substring(0, s.length()), state);
-        }
-    }
-
-    /**
      * Appends a NFA based on the input String to the specified State. Doesn't
      * actually create a new NFA instance, but only converts a String into
      * States and returns the last State.
@@ -149,8 +142,8 @@ public class NonDeterministicFiniteAutomaton {
      * @param state
      * @return A new State following the appended automaton.
      */
-    private State appendStarAutomaton(String s, State state) {
-        NonDeterministicFiniteAutomaton nfa = new NonDeterministicFiniteAutomaton(s);
+    private NonDeterministicFiniteAutomaton createStarAutomaton(String s) {
+        NonDeterministicFiniteAutomaton nfa = createPlusAutomaton(s);
 
         /*
          * Allow skipping the automaton altogether by creating an epsilon from
@@ -158,14 +151,11 @@ public class NonDeterministicFiniteAutomaton {
          * by adding transitions from nfa's accepting States to the beginning
          * State.
          */
-
-        state.addEpsilonTransition(nfa.initialState);
-        State newState = new State();
-        for (State accept : nfa.finalState) {
-            accept.addEpsilonTransition(state);
+        
+        for(State state : nfa.finalState) {
+            nfa.initialState.addEpsilonTransition(state);
         }
-        state.addEpsilonTransition(newState);
-        return newState;
+        return nfa;
     }
 
     /**
@@ -176,20 +166,17 @@ public class NonDeterministicFiniteAutomaton {
      * @param state
      * @return A new State following the appended automaton.
      */
-    private State appendPlusAutomaton(String s, State state) {
+    private NonDeterministicFiniteAutomaton createPlusAutomaton(String s) {
         NonDeterministicFiniteAutomaton nfa = new NonDeterministicFiniteAutomaton(s);
         /*
-         * Permit looping by adding transitions from the new post-automaton State
-         * to the automaton's initial State.
+         * Permit looping by adding transitions from the new post-automaton
+         * State to the automaton's initial State.
          */
-        
-        state.addEpsilonTransition(nfa.initialState);
         State newState = new State();
         for (State accept : nfa.finalState) {
-            accept.addEpsilonTransition(newState);
+            accept.addEpsilonTransition(nfa.initialState);
         }
-        newState.addEpsilonTransition(nfa.initialState);
-        return newState;
+        return nfa;
     }
 
     private void addEpsilonStates(Set<State> currentStates) {
