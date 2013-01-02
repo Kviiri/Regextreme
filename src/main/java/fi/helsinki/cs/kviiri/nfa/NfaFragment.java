@@ -9,12 +9,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
+ * Represents a piece of NFA
  * @author kviiri
  */
 public class NfaFragment {
 
+    //the initial state
     private NfaState start;
+    //the states with "dangling" arrows
     private List<NfaState> terminals;
 
     public NfaFragment(NfaState start, List<NfaState> terminals) {
@@ -22,6 +24,12 @@ public class NfaFragment {
         this.terminals = terminals;
     }
 
+    /**
+     * Patches this and next together by adding a transition from each "terminal"
+     * to the next state. As a result, this fragment's only remaining terminal
+     * will be "snext".
+     * @param next 
+     */
     private void connect(NfaState next) {
         for (NfaState n : terminals) {
             if (n.getaState() == null) {
@@ -34,16 +42,23 @@ public class NfaFragment {
         terminals.add(next);
     }
 
+    /**
+     * Creates a NFA based on the parameter regex.
+     * @param regex
+     * @return the NfaState that is the initial state of the NFA.
+     * @throws BadRegexException
+     */
     public static NfaState createNfa(String regex) throws BadRegexException {
+        //Convert the regex to a postfix regex
         regex = postfixify(regex);
         Stack<NfaFragment> stack = new Stack<NfaFragment>();
         NfaState match = new NfaState(NfaState.MATCH, null, null);
 
-
+        //Go through the postfix regex char by char
         for (int i = 0; i < regex.length(); i++) {
-
+            
             switch (regex.charAt(i)) {
-
+                //Escape character!
                 case '\\':
                     //escape by stepping forward a character and not continuing
                     i++;
@@ -70,9 +85,11 @@ public class NfaFragment {
                 throw new BadRegexException("One does not simply put a lonely "
                         + "escape character in the end of the regex!");
             }
+            //For a literal, we create a new NfaState and a Fragment containing it
             NfaState s = new NfaState(regex.charAt(i), null, null);
             NfaFragment frag = new NfaFragment(s, new ArrayList<NfaState>());
             frag.terminals.add(s);
+            //And on the stack it goes
             stack.push(frag);
         }
         stack.peek().connect(match);
@@ -125,11 +142,19 @@ public class NfaFragment {
         return new NfaFragment(other.start, terminals);
     }
 
+    /**
+     * Converts a regular expression to a postfix-regex.
+     * @param regex
+     * @return
+     * @throws BadRegexException 
+     */
     private static String postfixify(String regex) throws BadRegexException {
+        //Unroll the groups of the regex
         regex = unrollGroups(regex);
+        //ret will house the postfix expression as it is being built
         StringBuilder ret = new StringBuilder();
-        Stack<Integer> stackOfAlts = new Stack<Integer>(); //TODO: Fix these not to use les wrappers
-        Stack<Integer> stackOfNonOps = new Stack<Integer>();
+        IntegerStack stackOfAlts = new IntegerStack(16); //TODO: Fix these not to use les wrappers
+        IntegerStack stackOfNonOps = new IntegerStack(16);
 
         int alts = 0;
         int nonOps = 0;

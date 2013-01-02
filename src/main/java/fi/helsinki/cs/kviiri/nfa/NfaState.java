@@ -44,59 +44,33 @@ public class NfaState {
 
     public boolean accepts(String s) {
         Set<NfaState> currentStates = new HashSet<NfaState>();
-        currentStates.add(this);
+        addSplit(this, currentStates);
         Set<NfaState> nextStates = new HashSet<NfaState>();
-        Set<NfaState> resolvedSplits = new HashSet<NfaState>();
-        //This loop goes through the characters in the String
-        for (char ch : s.toCharArray()) {
-            /*
-             * This loop exists to allow using epsilon transitions (SPLITs)
-             * without consuming characters.
-             */
-            while (!currentStates.isEmpty()) {
-
-                /*
-                 * Next, we use an Iterator to go through the set of current
-                 * states
-                 */
-                Iterator<NfaState> it = currentStates.iterator();
-                while (it.hasNext()) {
-                    NfaState state = it.next();
-                    if (state.c == NfaState.SPLIT) {
-                        resolvedSplits.add(state.getaState());
-                        resolvedSplits.add(state.getbState());
-                    } else if (state.c == ch) {
-                        nextStates.add(state.getaState());
-
-                    }
-                    it.remove();
-
+        
+        for(char ch : s.toCharArray()) {
+            for(NfaState state : currentStates) {
+                if(state.c == ch) {
+                    addSplit(state.getaState(), nextStates);
                 }
-                currentStates.addAll(resolvedSplits);
-                resolvedSplits.clear();
             }
             Set<NfaState> swap = currentStates;
             currentStates = nextStates;
             nextStates = swap;
-            //No need to clear nextStates I hope. It should be cleared after the last loop
-
+            nextStates.clear();
         }
-        while (!currentStates.isEmpty()) {
-            Iterator<NfaState> it = currentStates.iterator();
-            while (it.hasNext()) {
-                NfaState state = it.next();
-                if (state.c == NfaState.MATCH) {
-                    return true;
-                }
-                if (state.c == NfaState.SPLIT) {
-                    resolvedSplits.add(state.aState);
-                    resolvedSplits.add(state.bState);
-                }
-                it.remove();
-            }
-            currentStates.addAll(resolvedSplits);
-            resolvedSplits.clear();
+        for(NfaState state : currentStates) {
+            if(state.c == NfaState.MATCH) return true;
         }
+        
         return false;
+    }
+
+    private void addSplit(NfaState state, Set<NfaState> set) {
+        if (state.c == NfaState.SPLIT) {
+            addSplit(state.getaState(), set);
+            addSplit(state.getbState(), set);
+        } else {
+            set.add(state);
+        }
     }
 }
