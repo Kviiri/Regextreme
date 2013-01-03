@@ -253,6 +253,26 @@ public void testMatchesStarAndPlus1() {
     }
     
     /*
+     * Tests escape character working
+     */
+    
+    public void testEscape1() {
+        assertTrue(matchesCorrectly("\\++",
+                "+++",
+                "+",
+                ""));
+    }
+    
+    public void testEscape2() {
+        assertTrue(matchesCorrectly("aab+\\+",
+                "aab+",
+                "aa+",
+                "aabbbb",
+                "aabbbbb+",
+                ""));
+    }
+    
+    /*
      * matchesCorrectly simply tests MyPattern versus Java's standard regex classes
      * Pattern and Matcher. True is returned iff MyPattern matches those and only those
      * testWord Strings also matched by Java's regex tools.

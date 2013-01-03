@@ -27,7 +27,7 @@ public class NfaFragment {
     /**
      * Patches this and next together by adding a transition from each "terminal"
      * to the next state. As a result, this fragment's only remaining terminal
-     * will be "snext".
+     * will be "next".
      * @param next 
      */
     private void connect(NfaState next) {
@@ -153,7 +153,7 @@ public class NfaFragment {
         regex = unrollGroups(regex);
         //ret will house the postfix expression as it is being built
         StringBuilder ret = new StringBuilder();
-        IntegerStack stackOfAlts = new IntegerStack(16); //TODO: Fix these not to use les wrappers
+        IntegerStack stackOfAlts = new IntegerStack(16);
         IntegerStack stackOfNonOps = new IntegerStack(16);
 
         int alts = 0;
@@ -167,6 +167,7 @@ public class NfaFragment {
                     }
                     i++;
                     ret.append('\\');
+                    ret.append(regex.charAt(i));
                     break;
                 case '(':
                     if (nonOps > 1) {
@@ -262,12 +263,12 @@ public class NfaFragment {
 
     public static void main(String[] args) {
         try {
-            System.out.println(postfixify("(-?[123456789][0123456789]*|0)"));
-            NfaState test = createNfa("(-?[123456789][0123456789]*|0)");
-            System.out.println(test.accepts("0"));
-            System.out.println(test.accepts("-0"));
-            System.out.println(test.accepts("200"));
-            System.out.println(test.accepts("044"));
+            System.out.println(postfixify("ab+\\+"));
+            NfaState ns = createNfa("ab+\\+");
+            System.out.println(ns.accepts("a+"));
+            System.out.println(ns.accepts("aa+"));
+            System.out.println(ns.accepts("aa++++"));
+            System.out.println(ns.accepts("bbb+"));
         } catch (BadRegexException ex) {
             Logger.getLogger(NfaFragment.class.getName()).log(Level.SEVERE, null, ex);
         }
