@@ -7,7 +7,6 @@ package fi.helsinki.cs.kviiri.pattern;
 import fi.helsinki.cs.kviiri.nfa.BadRegexException;
 import fi.helsinki.cs.kviiri.nfa.NfaFragment;
 import fi.helsinki.cs.kviiri.nfa.NfaState;
-import fi.helsinki.cs.kviiri.nfa.NonDeterministicFiniteAutomaton;
 
 /**
  *
@@ -33,12 +32,8 @@ public class MyPattern {
     }
     
     public static void main(String[] args) throws BadRegexException {
-        MyPattern mp = new MyPattern("AA*B+");
-        System.out.println(mp.matches("AAAABBBB"));
-        System.out.println(mp.matches("AAAAAA"));
-        System.out.println(mp.matches(""));
-        System.out.println(mp.matches("ABBBABB"));
-        System.out.println(mp.matches("AAAAAAAAAAAABBBBBBA"));
+        MyPattern mp = new MyPattern("a(b|c)");
+        System.out.println(mp.matches("ac"));
     }
     
 }
