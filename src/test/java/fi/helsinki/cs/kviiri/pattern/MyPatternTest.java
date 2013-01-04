@@ -332,6 +332,47 @@ public void testMatchesStarAndPlus1() {
                 "a~~~~b"));
     }
     
+    /*
+     * Tests the any char operator - period.
+     */
+    
+    public void testPeriod1() {
+        MyPattern pat = new MyPattern("b.ll");
+        assertTrue(allMatch(pat,
+                "bell",
+                "bill",
+                "ball",
+                "b.ll",
+                "bull",
+                "b ll"));
+        assertTrue(noneMatch(pat,
+                "baal",
+                "b..l",
+                "all",
+                ""));
+    }
+    
+    public void testPeriod2() {
+        MyPattern pat = new MyPattern("d.*d");
+        assertTrue(allMatch(pat,
+                "dd",
+                "dad",
+                "did",
+                "dead",
+                "donald",
+                "desolated",
+                "delivered",
+                "destroyed",
+                "desacrated",
+                "defenestrated"));
+        assertTrue(noneMatch(pat,
+                "d",
+                "ead",
+                "id",
+                "deforest",
+                "deliver",
+                "addendum"));
+    }
     
     /*
      * matchesCorrectly simply tests MyPattern versus Java's standard regex classes
@@ -363,9 +404,9 @@ public void testMatchesStarAndPlus1() {
      */
     private boolean allMatch(MyPattern mp, String... testWords) {
         for(String s : testWords) {
-            if(mp.matches(s)) return true;
+            if(!mp.matches(s)) return false;
         }
-        return false;
+        return true;
     }
     
     private boolean noneMatch(MyPattern mp, String... testWords) {

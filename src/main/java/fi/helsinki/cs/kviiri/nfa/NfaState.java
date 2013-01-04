@@ -16,6 +16,7 @@ public class NfaState {
 
     public static final int SPLIT = 32768;
     public static final int MATCH = 32769;
+    public static final int  ANY  = 32800; //where's the any key?
     int c;
     private NfaState aState;
     private NfaState bState;
@@ -49,7 +50,7 @@ public class NfaState {
         
         for(char ch : s.toCharArray()) {
             for(NfaState state : currentStates) {
-                if(state.c == ch) {
+                if(state.c == ch || state.c == NfaState.ANY) {
                     addSplit(state.getaState(), nextStates);
                 }
             }

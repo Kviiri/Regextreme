@@ -78,6 +78,12 @@ public class NfaFragment {
                 case '~':   //using tilde as concat operator for postfixes
                     stack.push(stack.pop().makeConcat(stack.pop()));
                     continue;
+                case '.':   //there's the any key!
+                    NfaState s = new NfaState(NfaState.ANY, null, null);
+                    NfaFragment frag = new NfaFragment(s, new ArrayList<NfaState>());
+                    frag.terminals.add(s);
+                    stack.push(frag);
+                    continue;
             }
             //We come here only if the character is literal
             //Or the last one was escape \
