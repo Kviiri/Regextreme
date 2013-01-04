@@ -168,7 +168,8 @@ public class NfaFragment {
                     i++;
                     ret.append('\\');
                     ret.append(regex.charAt(i));
-                    break;
+                    nonOps++;
+                    continue;
                 case '(':
                     if (nonOps > 1) {
                         nonOps--;
@@ -204,6 +205,10 @@ public class NfaFragment {
                         ret.append('~');
                     }
                     alts++;
+                    continue;
+                case '~':
+                    ret.append('\\').append('~');
+                    nonOps++;
                     continue;
                 case '+':
                 case '?':
@@ -263,12 +268,9 @@ public class NfaFragment {
 
     public static void main(String[] args) {
         try {
-            System.out.println(postfixify("ab+\\+"));
-            NfaState ns = createNfa("ab+\\+");
-            System.out.println(ns.accepts("a+"));
-            System.out.println(ns.accepts("aa+"));
-            System.out.println(ns.accepts("aa++++"));
-            System.out.println(ns.accepts("bbb+"));
+            System.out.println(postfixify("~+~"));
+            //NfaState ns = createNfa("c\\\\+a\\(*");
+            
         } catch (BadRegexException ex) {
             Logger.getLogger(NfaFragment.class.getName()).log(Level.SEVERE, null, ex);
         }

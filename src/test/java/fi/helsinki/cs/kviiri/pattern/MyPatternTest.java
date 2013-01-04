@@ -257,20 +257,81 @@ public void testMatchesStarAndPlus1() {
      */
     
     public void testEscape1() {
-        assertTrue(matchesCorrectly("\\++",
-                "+++",
-                "+",
+        MyPattern pat = new MyPattern("a+b\\+");
+        assertTrue(allMatch(pat,
+                "aab+",
+                "ab+",
+                "aaaab+"));
+        assertTrue(noneMatch(pat,
+                "aaabbb",
+                "aaabbb+",
+                "a+b+",
+                "aa+bb+",
                 ""));
     }
     
     public void testEscape2() {
-        assertTrue(matchesCorrectly("aab+\\+",
-                "aab+",
-                "aa+",
-                "aabbbb",
-                "aabbbbb+",
+        MyPattern pat = new MyPattern("c\\++");
+        assertTrue(allMatch(pat,
+                "c+",
+                "c++",
+                "c+++++"));
+        assertTrue(noneMatch(pat,
+                "c\\++",
+                "c+c+",
+                "c\\\\+",
+                "ccc++++",
                 ""));
     }
+    
+    public void testEscape3() {
+        MyPattern pat = new MyPattern("c\\\\+a\\(*");
+        assertTrue(allMatch(pat,
+                "c\\a",
+                "c\\a((",
+                "c\\\\\\a",
+                "c\\\\a(((("));
+        assertTrue(noneMatch(pat,
+                "c\\+a(",
+                "c\\\\+a\\",
+                "c\\+a(*",
+                "ca(",
+                ""));
+    }
+    
+    public void testEscape4() {
+        MyPattern pat = new MyPattern("\\\\a*");
+        assertTrue(allMatch(pat,
+                "\\",
+                "\\a",
+                "\\aaaaa"));
+        assertTrue(noneMatch(pat,
+                "\\\\a",
+                "\\a*",
+                "\\\\a*",
+                "a",
+                ""));
+    }
+    
+    /*
+     * My implementation uses tilde ~ as the postfix concat. Tests to make sure
+     * it actually works.
+     */
+    
+    public void testTildeEscapedAutomatically() {
+        MyPattern pat = new MyPattern("a~*b~");
+        assertTrue(allMatch(pat,
+                "ab~",
+                "a~b~",
+                "a~~~b~",
+                "a~~~~b~"));
+        assertTrue(noneMatch(pat,
+                "a~*b",
+                "ab",
+                "ab~~",
+                "a~~~~b"));
+    }
+    
     
     /*
      * matchesCorrectly simply tests MyPattern versus Java's standard regex classes
@@ -290,6 +351,26 @@ public void testMatchesStarAndPlus1() {
             if(m.matches() != actualPattern.matches(s)) {
                 return false;
             }
+        }
+        return true;
+    }
+    
+    /*
+     * In some instances my regex implementation works different from Java's
+     * own to keep it relatively simple. In these cases, I can't use Java's
+     * own Pattern as a reference - therefore, allMatch and noneMatch are used
+     * to check whether the Pattern matches/doesn't match all the given testwords.
+     */
+    private boolean allMatch(MyPattern mp, String... testWords) {
+        for(String s : testWords) {
+            if(mp.matches(s)) return true;
+        }
+        return false;
+    }
+    
+    private boolean noneMatch(MyPattern mp, String... testWords) {
+        for(String s : testWords) {
+            if(mp.matches(s)) return false;
         }
         return true;
     }
