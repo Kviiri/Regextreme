@@ -29,11 +29,5 @@ public class MyPattern {
     
     public boolean matches(String input) {
         return nfa.accepts(input);
-    }
-    
-    public static void main(String[] args) throws BadRegexException {
-        MyPattern mp = new MyPattern("a(b|c)");
-        System.out.println(mp.matches("ac"));
-    }
-    
+    }    
 }
