@@ -73,10 +73,10 @@ public class NfaFragment {
                     stack.peek().makeMaybe();
                     continue;
                 case '|':
-                    stack.push(stack.pop().makeUnion(stack.pop()));
+                    stack.get(stack.size() - 2).makeUnion(stack.pop());
                     continue;
                 case '~':   //using tilde as concat operator for postfixes
-                    stack.push(stack.pop().makeConcat(stack.pop()));
+                    stack.get(stack.size() - 2).makeConcat(stack.pop());
                     continue;
                 case '.':   //there's the any key!
                     NfaState s = new NfaState(NfaState.ANY, null, null);
@@ -124,28 +124,27 @@ public class NfaFragment {
     }
 
     /**
-     * Creates a new NfaFragment with a split state with epsilons to this and
-     * other
-     *
-     * @param other
-     * @return
+     * Connects this and other as a union fragment.
+     * @param other 
      */
-    private NfaFragment makeUnion(NfaFragment other) {
-        NfaState next = new NfaState(NfaState.SPLIT, start, other.start);
+    private void makeUnion(NfaFragment other) {
+        /*NfaState next = new NfaState(NfaState.SPLIT, start, other.start);
         List<NfaState> terminalList = new ArrayList<NfaState>(terminals);
         terminalList.addAll(other.terminals);
-        return new NfaFragment(next, terminalList);
+        return new NfaFragment(next, terminalList);*/
+        NfaState newStart = new NfaState(NfaState.SPLIT, start, other.start);
+        this.terminals.addAll(other.terminals);
+        this.start = newStart;
     }
 
     /**
-     * Creates a new NfaFragment with this concatenated after other
+     * Concats other after this fragment.
      *
      * @param other
-     * @return
      */
-    private NfaFragment makeConcat(NfaFragment other) {
-        other.connect(start);
-        return new NfaFragment(other.start, terminals);
+    private void makeConcat(NfaFragment other) {
+        connect(other.start);
+        terminals = other.terminals;
     }
 
     /**

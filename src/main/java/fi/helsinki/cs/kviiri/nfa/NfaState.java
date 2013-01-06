@@ -49,6 +49,7 @@ public class NfaState {
         Set<NfaState> nextStates = new HashSet<NfaState>();
         
         for(char ch : s.toCharArray()) {
+            if(currentStates.isEmpty()) return false; //no states to check?
             for(NfaState state : currentStates) {
                 if(state.c == ch || state.c == NfaState.ANY) {
                     addSplit(state.getaState(), nextStates);
