@@ -24,7 +24,7 @@ The automaton created is composed of NfaStates. Each state has the following pro
 
 First, the regex has its groups unrolled using the alternation operator |. For example, [abc] becomes the equivalent (a|b|c).
 
-Second, the regex is converted into a postfix regex, as in Thompson's paper. Tilde (~) is used as an explicit concatenation operator. For example, the regex "(ab|cd)" becomes "ab~cd~|". Tilde characters present in the original regex will be escaped automatically: the regex "a~+" will become "a\~+~" in postfix form.
+Second, the regex is converted into a postfix regex, as in Thompson's paper. Tilde (~) is used as an explicit concatenation operator. For example, the regex "(ab|cd)" becomes "ab~cd~|". Tilde characters present in the original regex will be escaped automatically: the regex "a~+" will become "a\\~+~" in postfix form.
 
 The resulting postfix regex will be compiled into a NFA by creating "fragments" and storing them on a stack. The regex is evaluated character by character:
 
