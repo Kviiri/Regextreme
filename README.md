@@ -20,7 +20,7 @@ This implementation is based on the Thompson regex to NFA construction algorithm
 
 The automaton created is composed of NfaStates. Each state has the following properties:
  - c, which can either be a character, SPLIT, MATCH or ANY
- - two NfaState references, with both being used only for SPLIT states
+ - two NfaState references. A is the "normal" successor for non-SPLIT states, and for SPLIT states, A and B are both reached through epsilon transition (no symbol consumed)
 
 First, the regex has its groups unrolled using the alternation operator |. For example, [abc] becomes the equivalent (a|b|c).
 
