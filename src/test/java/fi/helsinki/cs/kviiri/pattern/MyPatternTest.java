@@ -176,6 +176,34 @@ public void testMatchesStarAndPlus1() {
     }
     
     /*
+     * Tests multiple mixed operators 
+     */
+    
+    public void testMatchesMixed1() {
+        assertTrue(matchesCorrectly("a(fa?)*ik",
+                "afaik",
+                "afafaik",
+                "afffaffaik",
+                "aik",
+                "afik",
+                ""));
+    }
+    
+    public void testMatchesMixed2() {
+        assertTrue(matchesCorrectly("i(ir*c)+",
+                "ic",
+                "i",
+                "iiric",
+                "iririric",
+                "iirc",
+                "iic",
+                "iriririi",
+                "irrr",
+                "rc",
+                ""));
+    }
+    
+    /*
      * Test parenthesis functionality
      */
     public void testMatchesParentheses1() {
