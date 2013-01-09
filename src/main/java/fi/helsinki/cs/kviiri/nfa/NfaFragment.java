@@ -5,30 +5,35 @@
 package fi.helsinki.cs.kviiri.nfa;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- * Represents a piece of NFA
+ * Represents a fragment of NFA, with at least one State.
+ *
  * @author kviiri
  */
 public class NfaFragment {
 
     //the initial state
     private NfaState start;
-    //the states with "dangling" arrows
+    //the states with "dangling" arrows (where this fragment ends)
     private List<NfaState> terminals;
 
+    /**
+     * Creates a new NfaFragment with the specified start state and terminal state list
+     * @param start
+     * @param terminals 
+     */
     public NfaFragment(NfaState start, List<NfaState> terminals) {
         this.start = start;
         this.terminals = terminals;
     }
 
     /**
-     * Patches this and next together by adding a transition from each "terminal"
-     * to the next state. As a result, this fragment's only remaining terminal
-     * will be "next".
-     * @param next 
+     * Patches this and next together by adding a transition from each
+     * "terminal" to the next state. As a result, this fragment's only remaining
+     * terminal will be "next".
+     *
+     * @param next
      */
     private void connect(NfaState next) {
         for (NfaState n : terminals) {
@@ -44,6 +49,7 @@ public class NfaFragment {
 
     /**
      * Creates a NFA based on the parameter regex.
+     *
      * @param regex
      * @return the NfaState that is the initial state of the NFA.
      * @throws BadRegexException
@@ -56,7 +62,7 @@ public class NfaFragment {
 
         //Go through the postfix regex char by char
         for (int i = 0; i < regex.length(); i++) {
-            
+
             switch (regex.charAt(i)) {
                 //Escape character!
                 case '\\':
@@ -125,13 +131,15 @@ public class NfaFragment {
 
     /**
      * Connects this and other as a union fragment.
-     * @param other 
+     *
+     * @param other
      */
     private void makeUnion(NfaFragment other) {
-        /*NfaState next = new NfaState(NfaState.SPLIT, start, other.start);
-        List<NfaState> terminalList = new ArrayList<NfaState>(terminals);
-        terminalList.addAll(other.terminals);
-        return new NfaFragment(next, terminalList);*/
+        /*
+         * NfaState next = new NfaState(NfaState.SPLIT, start, other.start);
+         * List<NfaState> terminalList = new ArrayList<NfaState>(terminals);
+         * terminalList.addAll(other.terminals); return new NfaFragment(next, terminalList);
+         */
         NfaState newStart = new NfaState(NfaState.SPLIT, start, other.start);
         this.terminals.addAll(other.terminals);
         this.start = newStart;
@@ -149,9 +157,10 @@ public class NfaFragment {
 
     /**
      * Converts a regular expression to a postfix-regex.
+     *
      * @param regex
      * @return
-     * @throws BadRegexException 
+     * @throws BadRegexException
      */
     private static String postfixify(String regex) throws BadRegexException {
         //Unroll the groups of the regex
@@ -190,7 +199,7 @@ public class NfaFragment {
                     continue;
                 case ')':
                     //end subexpression
-                    
+
                     //mismatched parentheses
                     if (stackOfAlts.isEmpty()) {
                         throw new BadRegexException("Mismatched parentheses!");
@@ -255,7 +264,7 @@ public class NfaFragment {
         while (--nonOps > 0) {
             ret.append('~');
         }
-        
+
         //and append the remaining alternations
         while (alts > 0) {
             ret.append('|');
@@ -269,6 +278,7 @@ public class NfaFragment {
      */
     /**
      * Unrolls groups in regex: "[abcd] -> (a|b|c|d)
+     *
      * @param regex
      * @return regex with groups unrolled
      */

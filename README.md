@@ -3,6 +3,9 @@ Regextreme
 
 Parsing regular expressions for fun and profit.
 
+Update 9.1.2013
+Speed test info and usage.
+
 Update 4.1.2013
 Modified the code to feature more Thompson's construction and less wonky improvisation. Supported features:
 
@@ -12,6 +15,22 @@ Modified the code to feature more Thompson's construction and less wonky improvi
  - Period as "any char" -metachar
  - \ as escape character, any character after it is interpreted as a literal character (note, not the same as in typical regex!)
  - Unit tests
+
+
+Usage:
+
+Create new MyPattern, with the specified regex as the constructor's argument. Use the matches(String input) method to determine whether a String matches or not.
+
+
+Speed tests:
+
+I tested my regex versus Java's own Pattern and Matcher.
+
+I used two different test sets: the first featured a regex of twenty a? followed by twenty a, and the input String was 'a' repeated n times for n [1..40]. This is a known "pathological" case in Perl's regex. The first test set produced very clear results in favor of my implementation: the first ten rounds (n=1 to n=10) took my implementation 10 milliseconds, while the reference implementation took 120 milliseconds. In total, it took the reference implementation about a second to finish the suite, while my implementation took about 20 milliseconds.
+
+The second test suite featured a regex matching correctly formatted integers along with several test words. This set provided no clear results - both implementations were very fast.
+
+As for initializing the Patterns, my implementation took six milliseconds in the first test case, which is about twice as long as it took to initialize Java's standard Pattern. In the other test case, there was no notable difference during several test runs.
 
 
 Description of the algorithm:

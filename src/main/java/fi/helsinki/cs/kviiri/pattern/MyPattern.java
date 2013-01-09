@@ -14,20 +14,24 @@ import fi.helsinki.cs.kviiri.nfa.NfaState;
  * 
  * A Pattern class that compiles a regular expression into a NonDeterministicFiniteAutomaton.
  */
-public class MyPattern {
+public class MyPattern implements RegexPattern {
     
     private NfaState nfa;
     
     /**
      * Compiles the input String into an automaton.
      * @param s
-     * @return 
      */
     public MyPattern(String s) throws BadRegexException {
         nfa = NfaFragment.createNfa(s);
     }
     
+    /**
+     * Returns true if and only if the input String matches the MyPattern.
+     * @param input
+     * @return
+     */
     public boolean matches(String input) {
         return nfa.accepts(input);
-    }    
+    }
 }

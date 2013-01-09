@@ -9,7 +9,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- *
+ * Represents a state in a NFA.
  * @author kviiri
  */
 public class NfaState {
@@ -43,6 +43,11 @@ public class NfaState {
         this.bState = bState;
     }
 
+    /**
+     * Returns true iff the NFA accepts the input String
+     * @param s
+     * @return 
+     */
     public boolean accepts(String s) {
         Set<NfaState> currentStates = new HashSet<NfaState>();
         addSplit(this, currentStates);
